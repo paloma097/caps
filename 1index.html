@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Centro de Ajuda - Integração CAPS (Arquivo Único)</title>
+  <style>
+    :root{--bg:#f7f9fb;--card:#fff;--muted:#6b7280;--accent:#0ea5a4}
+    body{font-family:Inter, system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial; background:var(--bg); margin:0; padding:20px; color:#0f172a}
+    .wrap{max-width:1100px;margin:0 auto}
+    header{display:flex;align-items:center;gap:16px}
+    header h1{font-size:1.4rem;margin:0}
+    .grid{display:grid;grid-template-columns:1fr 420px;gap:18px;margin-top:18px}
+    .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 6px 18px rgba(2,6,23,0.06)}
+    label{display:block;font-size:0.9rem;margin-top:8px;color:var(--muted)}
+    input[type=text], input[type=number], select, textarea{width:100%;padding:8px 10px;border-radius:8px;border:1px solid #e6eef3;margin-top:6px;font-size:0.95rem}
+    .row{display:flex;gap:8px}
+    .row > *{flex:1}
+    button{background:var(--accent);color:white;padding:10px 12px;border:0;border-radius:10px;cursor:pointer}
+    .small{font-size:0.85rem;color:var(--muted)}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:8px;border-bottom:1px solid #eef2f6;text-align:left}
+    .danger{background:#fee2e2;color:#991b1b}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#1e3a8a;font-weight:600}
+    footer{font-size:0.8rem;color:var(--muted);margin-top:12px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .muted-block{background:#fbfdff;border:1px solid #eef6f9;padding:10px;border-radius:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px">
+        <div style="width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#0ea5a4)"></div>
+        <div>
+          <h1>Centro de Ajuda — Integração CAPS (arquivo único)</h1>
+          <div class="small">Ferramenta local para registrar, organizar e gerar relatórios sobre pacientes (uso local / confidencial)</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Registrar / Editar Paciente</h2>
+        <div class="small">Preencha os dados do paciente e pressione <strong>Salvar</strong>. Cada paciente tem um <strong>código</strong> único.</div>
+
+        <label for="codigo">Código (ID único)</label>
+        <input id="codigo" type="text" placeholder="ex: CAPS-2025-0001">
+
+        <label for="nome">Nome completo</label>
+        <input id="nome" type="text" placeholder="Nome">
+
+        <div class="row">
+          <div>
+            <label for="idade">Idade</label>
+            <input id="idade" type="number" min="0" max="120">
+          </div>
+          <div>
+            <label for="sexo">Sexo</label>
+            <select id="sexo">
+              <option value="">--</option>
+              <option value="F">Feminino</option>
+              <option value="M">Masculino</option>
+              <option value="O">Outro/Não declarar</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="estado_civil">Estado civil</label>
+        <select id="estado_civil">
+          <option value="">--</option>
+          <option>Solteiro(a)</option>
+          <option>Casado(a)/União estável</option>
+          <option>Separado(a)/Divorciado(a)</option>
+          <option>Viúvo(a)</option>
+        </select>
+
+        <label for="tem_filhos">Possui filhos?</label>
+        <select id="tem_filhos">
+          <option value="">--</option>
+          <option value="sim">Sim</option>
+          <option value="nao">Não</option>
+          <option value="desconhecido">Desconhecido</option>
+        </select>
+
+        <label for="antecedentes">Antecedentes criminais (resumo)</label>
+        <textarea id="antecedentes" rows="3" placeholder="Descreva se houver (ex: crime X - data - observação)"></textarea>
+
+        <label for="riscos">Fatores de risco / Observações clínicas</label>
+        <textarea id="riscos" rows="3" placeholder="Ex: ideação suicida, risco de violência, uso de substâncias, etc."></textarea>
+
+        <label for="nivel">Nível de complexidade (1 = baixo → 5 = alto)</label>
+        <input id="nivel" type="range" min="1" max="5" value="1" oninput="document.getElementById('nivel_val').textContent=this.value">
+        <div class="small">Nível atual: <span id="nivel_val">1</span></div>
+
+        <label for="observacoes_adicionais">Outros dados (endereço, telefone, rede de apoio)</label>
+        <textarea id="observacoes_adicionais" rows="3"></textarea>
+
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button onclick="salvarPaciente()">Salvar</button>
+          <button onclick="limparFormulario()" style="background:#64748b">Limpar</button>
+          <button onclick="exportarCSV()" style="background:#0b7285">Exportar CSV</button>
+        </div>
+
+        <div style="margin-top:12px" class="muted-block">
+          <strong>Aviso de privacidade e uso</strong>
+          <p class="small">Este arquivo é uma ferramenta local. Não armazene dados sensíveis em sistemas não criptografados. Verifique a legislação (LGPD) e protocolos da instituição antes de usar. Esta ferramenta NÃO substitui avaliação clínica profissional. Recomenda-se armazenar backups criptografados e limitar acesso.</p>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h3>Busca rápida / Relatórios</h3>
+        <label for="buscar_codigo">Buscar por código</label>
+        <input id="buscar_codigo" type="text" placeholder="Digite código e clique Buscar">
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button onclick="buscar()">Buscar</button>
+          <button onclick="listarTodos()" style="background:#2563eb">Listar todos</button>
+        </div>
+
+        <div id="resultado" style="margin-top:12px"></div>
+
+        <hr>
+        <h4>Gerar relatório (seleção)</h4>
+        <label for="selecionar">Selecione códigos (vírgula separado) ou deixe vazio para todos</label>
+        <input id="selecionar" type="text" placeholder="ex: CAPS-2025-0001,CAPS-2025-0002">
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button onclick="gerarRelatorio()">Gerar relatório</button>
+          <button onclick="gerarRelatorioPDF()" style="background:#0f172a">Gerar PDF (print)</button>
+        </div>
+
+        <hr>
+        <h4>Indicações de internação (códigos autom.)</h4>
+        <div class="small">O sistema sugere códigos com base em sinalizadores (alto nível → considerar urgência). Sempre confirme com avaliação médica.</div>
+        <ul>
+          <li><span class="pill">I1</span> Internação Psiquiátrica - Risco suicida / ideação ativa</li>
+          <li><span class="pill">I2</span> Internação para desintoxicação - Uso grave de substâncias</li>
+          <li><span class="pill">I3</span> Internação Psiquiátrica - Risco de violência para terceiros</li>
+          <li><span class="pill">I4</span> Internação de observação - Sintomas agudos sem risco imediato</li>
+          <li><span class="pill">I5</span> Internação social / suporte - necessitando acompanhamento intensivo</li>
+        </ul>
+
+        <div style="margin-top:6px">
+          <button onclick="avaliarInternacao()">Avaliar indic. internas</button>
+        </div>
+
+        <div id="sugestoes" style="margin-top:8px"></div>
+
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:18px">
+      <h2>Banco local de pacientes</h2>
+      <div class="small">Dados armazenados no navegador (localStorage). Ideal para teste e uso em rede local com medidas de segurança.</div>
+      <table id="tabela">
+        <thead><tr><th>Código</th><th>Nome</th><th>Idade</th><th>Nível</th><th>Tem antecedentes?</th><th>Ações</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <footer class="small">
+      <strong>Importante:</strong> este sistema é uma ferramenta auxiliar. As sugestões de internação são geradas por regras simples programadas — <em>não substituem</em> avaliação clínica e jurídica da equipe multidisciplinar. Proteja os dados de acordo com normas institucionais e legais.
+    </footer>
+  </div>
+
+  <script>
+    // Utilitários simples para salvar/recuperar base no localStorage
+    const STORAGE_KEY = 'caps_pacientes_v1';
+
+    function carregarBase(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }
+    function salvarBase(base){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(base));
+      atualizarTabela();
+    }
+
+    function salvarPaciente(){
+      const codigo = document.getElementById('codigo').value.trim();
+      if(!codigo){ alert('Código é obrigatório'); return }
+      const base = carregarBase();
+      base[codigo] = {
+        codigo,
+        nome: document.getElementById('nome').value.trim(),
+        idade: document.getElementById('idade').value,
+        sexo: document.getElementById('sexo').value,
+        estado_civil: document.getElementById('estado_civil').value,
+        tem_filhos: document.getElementById('tem_filhos').value,
+        antecedentes: document.getElementById('antecedentes').value.trim(),
+        riscos: document.getElementById('riscos').value.trim(),
+        nivel: Number(document.getElementById('nivel').value),
+        observacoes: document.getElementById('observacoes_adicionais').value.trim(),
+        atualizado_em: new Date().toISOString()
+      };
+      salvarBase(base);
+      alert('Paciente salvo');
+      limparFormulario();
+    }
+
+    function limparFormulario(){
+      ['codigo','nome','idade','sexo','estado_civil','tem_filhos','antecedentes','riscos','nivel','observacoes_adicionais'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(!el) return;
+        if(el.tagName==='INPUT' || el.tagName==='SELECT' || el.tagName==='TEXTAREA') el.value='';
+      });
+      document.getElementById('nivel_val').textContent='1';
+    }
+
+    function buscar(){
+      const codigo = document.getElementById('buscar_codigo').value.trim();
+      const resultado = document.getElementById('resultado');
+      resultado.innerHTML = '';
+      if(!codigo){ resultado.innerHTML = '<div class="small">Digite um código para buscar</div>'; return }
+      const base = carregarBase();
+      const p = base[codigo];
+      if(!p){ resultado.innerHTML = '<div class="small">Paciente não encontrado</div>'; return }
+      resultado.innerHTML = renderPacienteResumo(p);
+    }
+
+    function renderPacienteResumo(p){
+      return `<div><strong>${escapeHtml(p.codigo)} - ${escapeHtml(p.nome || '-')}</strong>
+        <div class="small">Idade: ${escapeHtml(p.idade||'-')} | Nível: ${p.nivel}</div>
+        <div style="margin-top:8px">Antecedentes: <div class="small">${escapeHtml(p.antecedentes||'—')}</div></div>
+        <div style="margin-top:6px">Riscos: <div class="small">${escapeHtml(p.riscos||'—')}</div></div>
+        <div style="margin-top:8px"><button onclick="editar('${p.codigo}')">Editar</button> <button onclick="remover('${p.codigo}')" style="background:#ef4444">Remover</button></div>
+      </div>`;
+    }
+
+    function editar(codigo){
+      const base = carregarBase();
+      const p = base[codigo];
+      if(!p) { alert('Não encontrado'); return }
+      document.getElementById('codigo').value = p.codigo;
+      document.getElementById('nome').value = p.nome;
+      document.getElementById('idade').value = p.idade;
+      document.getElementById('sexo').value = p.sexo;
+      document.getElementById('estado_civil').value = p.estado_civil;
+      document.getElementById('tem_filhos').value = p.tem_filhos;
+      document.getElementById('antecedentes').value = p.antecedentes;
+      document.getElementById('riscos').value = p.riscos;
+      document.getElementById('nivel').value = p.nivel;
+      document.getElementById('nivel_val').textContent = p.nivel;
+      document.getElementById('observacoes_adicionais').value = p.observacoes;
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function remover(codigo){
+      if(!confirm('Confirma exclusão do paciente '+codigo+'?')) return;
+      const base = carregarBase();
+      delete base[codigo];
+      salvarBase(base);
+    }
+
+    function listarTodos(){
+      const base = carregarBase();
+      const arr = Object.values(base).sort((a,b)=> a.nivel - b.nivel || (a.nome||'').localeCompare(b.nome||''));
+      const resultado = document.getElementById('resultado');
+      if(arr.length===0) resultado.innerHTML = '<div class="small">Nenhum paciente registrado.</div>';
+      else resultado.innerHTML = arr.map(p=>renderPacienteResumo(p)).join('<hr>');
+    }
+
+    function atualizarTabela(){
+      const base = carregarBase();
+      const tbody = document.querySelector('#tabela tbody');
+      tbody.innerHTML = '';
+      const arr = Object.values(base).sort((a,b)=> a.nivel - b.nivel || (a.nome||'').localeCompare(b.nome||''));
+      for(const p of arr){
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escapeHtml(p.codigo)}</td><td>${escapeHtml(p.nome||'—')}</td><td>${escapeHtml(p.idade||'—')}</td><td>${p.nivel}</td><td>${escapeHtml(!!p.antecedentes ? (p.antecedentes? 'Sim' : 'Não') : 'Não')}</td><td><button onclick="editar('${p.codigo}')">Editar</button> <button onclick="remover('${p.codigo}')" style="background:#ef4444">Excluir</button></td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // Relatório: gera HTML contendo os pacientes selecionados ou todos
+    function gerarRelatorio(){
+      const selecionar = document.getElementById('selecionar').value.trim();
+      const base = carregarBase();
+      let codigos = [];
+      if(!selecionar){ codigos = Object.keys(base); }
+      else codigos = selecionar.split(',').map(s=>s.trim()).filter(Boolean);
+      const list = codigos.map(c=> base[c]).filter(Boolean).sort((a,b)=> a.nivel - b.nivel);
+      if(list.length===0){ alert('Nenhum paciente selecionado / encontrado'); return }
+      const html = montarRelatorioHTML(list);
+      const w = window.open('','_blank');
+      w.document.write(html);
+      w.document.close();
+    }
+
+    function montarRelatorioHTML(list){
+      const rows = list.map(p=>{
+        const sugestoes = gerarSugestoesParaPaciente(p).map(s=>`<li>${escapeHtml(s)}</li>`).join('');
+        return `<section style="margin-bottom:18px"><h3>${escapeHtml(p.codigo)} — ${escapeHtml(p.nome||'—')}</h3>
+          <div class="small">Idade: ${escapeHtml(p.idade||'—')} | Estado civil: ${escapeHtml(p.estado_civil||'—')} | Filhos: ${escapeHtml(p.tem_filhos||'—')} | Nível: ${p.nivel}</div>
+          <p><strong>Antecedentes:</strong> ${escapeHtml(p.antecedentes||'—')}</p>
+          <p><strong>Riscos / Observações:</strong> ${escapeHtml(p.riscos||'—')}</p>
+          <p><strong>Indicações sugeridas:</strong></p><ul>${sugestoes}</ul>
+        </section>`;
+      }).join('\n');
+
+      return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório CAPS</title><style>body{font-family:Arial,Helvetica,sans-serif;padding:18px} h1{margin-bottom:6px} .small{color:#475569;font-size:0.9rem}</style></head><body><h1>Relatório — Centro de Ajuda CAPS</h1><div class="small">Gerado em: ${new Date().toLocaleString()}</div><hr>${rows}<hr><div class="small">Observação: recomendações automáticas. Confirmar com equipe clínica.</div></body></html>`;
+    }
+
+    function gerarRelatorioPDF(){
+      gerarRelatorio(); // abre em nova aba e usuário pode imprimir (Ctrl+P / Print)
+    }
+
+    // Sugestões de internação baseadas em regras simples
+    function gerarSugestoesParaPaciente(p){
+      const sugestoes = [];
+      const textoRiscos = (p.riscos||'').toLowerCase();
+      const anteced = (p.antecedentes||'').toLowerCase();
+      if(p.nivel>=5 || /suicid/i.test(textoRiscos) || /ideação|ideacao|ideia suicida/.test(textoRiscos)) sugestoes.push('I1 — Internação Psiquiátrica (risco suicida)');
+      if(/substânc|substanc|droga|álcool|alcool|álcool/.test(textoRiscos) || /dependen|desintox/i.test(textoRiscos)) sugestoes.push('I2 — Internação para desintoxicação');
+      if(/violênc|violencia|agress/i.test(textoRiscos) || /homicid|ameaça/.test(anteced)) sugestoes.push('I3 — Internação (risco de violência)');
+      if(p.nivel===4) sugestoes.push('I4 — Internação de observação (sintomas agudos)');
+      if(p.nivel<=2) sugestoes.push('I5 — Acompanhamento ambulatorial / suporte intensivo');
+      if(sugestoes.length===0) sugestoes.push('Sem indicação automática clara — avaliar clinicamente');
+      return sugestoes;
+    }
+
+    function avaliarInternacao(){
+      const base = carregarBase();
+      const arr = Object.values(base).sort((a,b)=> b.nivel - a.nivel).slice(0,10); // top 10 por severidade
+      const cont = document.getElementById('sugestoes');
+      if(arr.length===0){ cont.innerHTML='<div class="small">Sem pacientes registrados.</div>'; return }
+      cont.innerHTML = arr.map(p=>{
+        const sugestoes = gerarSugestoesParaPaciente(p).map(s=>`<li>${escapeHtml(s)}</li>`).join('');
+        return `<div style="margin-bottom:10px"><strong>${escapeHtml(p.codigo)} — ${escapeHtml(p.nome||'—')} (Nível ${p.nivel})</strong><ul>${sugestoes}</ul></div>`;
+      }).join('');
+    }
+
+    // Export CSV
+    function exportarCSV(){
+      const base = carregarBase();
+      const rows = [['codigo','nome','idade','sexo','estado_civil','tem_filhos','nivel','antecedentes','riscos','observacoes','atualizado_em']];
+      for(const p of Object.values(base)){
+        rows.push([p.codigo, p.nome, p.idade, p.sexo, p.estado_civil, p.tem_filhos, p.nivel, p.antecedentes, p.riscos, p.observacoes, p.atualizado_em]);
+      }
+      const csv = rows.map(r=> r.map(c=> '"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'caps_pacientes.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+
+    // Helpers
+    function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+
+    // Inicializa tabela
+    atualizarTabela();
+
+  </script>
+</body>
+</html>
